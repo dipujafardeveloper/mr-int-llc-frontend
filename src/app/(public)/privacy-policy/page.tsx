@@ -1,4 +1,4 @@
-import SectionTitle from "@/components/shared/section/SectionTitle";
+import PageSectionTitle from "@/components/shared/section/PageSectionTitle";
 import PrivacyPolicyContent from "./_components/PrivacyPolicyContent";
 
 export const metadata = {
@@ -10,7 +10,7 @@ export const metadata = {
 export default function PrivacyPolicyPage() {
   return (
     <div className="page-padding">
-      <SectionTitle
+      <PageSectionTitle
         title="Privacy and Policy"
         subTitle="Here’s everything you need to know about our app."
       />

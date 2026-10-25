@@ -5,10 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { quickLinks, serviceLinks } from "./footer.data";
 import { Input } from "@/components/ui/input";
+import { FacebookIcon, InstagramIcon, LinkedInIcon, XIcon } from "@/icons";
 
 export default function Footer() {
   return (
-    <footer className="mt-auto bg-primary-color text-secondary-color">
+    <footer className=" bg-primary-color text-secondary-color xl:mt-20 lg:mt-16 mt-10">
       <div className="border-b border-secondary-color/20 py-10 sm:py-12 lg:py-16">
         <Container>
           <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-[1.5fr_0.8fr_0.9fr_1.2fr_1.2fr] lg:gap-10">
@@ -22,6 +23,20 @@ export default function Footer() {
                   className="h-auto w-52 object-contain sm:w-40"
                 />
               </Link>
+              <div className="mt-6 flex justify-center items-center gap-4">
+                <Link href={"#"}>
+                  <XIcon />
+                </Link>
+                <Link href={"#"}>
+                  <FacebookIcon />
+                </Link>
+                <Link href={"#"}>
+                  <LinkedInIcon />
+                </Link>
+                <Link href={"#"}>
+                  <InstagramIcon />
+                </Link>
+              </div>
             </div>
 
             <FooterLinkGroup heading="Quick Links" links={quickLinks} />

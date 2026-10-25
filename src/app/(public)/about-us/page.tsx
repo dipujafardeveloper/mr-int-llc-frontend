@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="flex-1">
+    <main className="flex-1 page-padding lg:space-y-16 space-y-10">
       <AboutHeader />
       <OurCommitment />
     </main>

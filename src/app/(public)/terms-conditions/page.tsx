@@ -1,4 +1,4 @@
-import SectionTitle from "@/components/shared/section/SectionTitle";
+import PageSectionTitle from "@/components/shared/section/PageSectionTitle";
 import TermsContent from "./_components/TermsContent";
 
 export const metadata = {
@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function TermsConditionPage() {
   return <div className="page-padding">
-        <SectionTitle
+        <PageSectionTitle
           title="Terms and Conditions"
           subTitle="Here’s everything you need to know about our app."
         />
