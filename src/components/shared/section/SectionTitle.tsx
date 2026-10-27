@@ -14,12 +14,12 @@ export default function SectionTitle({
     <div className="flex justify-between items-start gap-2">
       <div
         className={cn(
-          "xl:text-4xl text-3xl font-bold  lg:space-y-3 space-y-2",
+          "xl:text-4xl md:text-3xl text-xl font-bold  lg:space-y-3 space-y-2",
           className,
         )}
       >
         <h4>{title}</h4>
-        <p className="text-lg text-[#1A1A1A] font-normal max-w-75">{subTitle}</p>
+        <p className="md:text-lg text-sm text-[#1A1A1A] font-normal max-w-75">{subTitle}</p>
       </div>
       <ViewAllButton />
     </div>

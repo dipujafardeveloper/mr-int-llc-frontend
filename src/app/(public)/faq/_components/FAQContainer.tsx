@@ -106,7 +106,7 @@ export default function FAQContainer() {
   const [openId, setOpenId] = useState<string | null>("place-order");
 
   return (
-    <Container className=" mt-10 grid  grid-cols-1 items-start gap-4 sm:mt-12 md:grid-cols-2 md:gap-5">
+    <div className=" mt-10 grid  grid-cols-1 items-start gap-4 sm:mt-12 md:grid-cols-2 md:gap-5">
       {faqColumns.map((column, columnIndex) => (
         <motion.div
           className="flex flex-col gap-4 md:gap-5"
@@ -192,6 +192,6 @@ export default function FAQContainer() {
           })}
         </motion.div>
       ))}
-    </Container>
+    </div>
   );
 }

@@ -53,7 +53,7 @@ export default function AboutHeader({ page }: { page?: string }) {
             About Us
           </motion.p>
           <motion.h1
-            className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-slate-950 sm:text-3xl lg:text-[42px] xl:text-6xl"
+            className="max-w-3xl md:text-3xl text-xl font-bold leading-tight tracking-tight text-slate-950 lg:text-[42px] xl:text-6xl"
             variants={itemVariants}
           >
             Your Trusted
@@ -61,7 +61,7 @@ export default function AboutHeader({ page }: { page?: string }) {
           </motion.h1>
 
           <motion.div
-            className="mt-6 flex flex-wrap gap-x-8 gap-y-4 sm:gap-x-10"
+            className="md:mt-6 mt-4 flex flex-wrap gap-x-8 gap-y-4 sm:gap-x-10"
             variants={itemVariants}
           >
             {stats.map((stat) => (
@@ -79,7 +79,7 @@ export default function AboutHeader({ page }: { page?: string }) {
 
         <div className="flex flex-col xl:flex-row gap-x-10 items-end">
           <motion.p
-            className="max-w-lg text-lg leading-6 text-[#1A2028] md:justify-self-end"
+            className="max-w-lg md:text-lg leading-6 text-[#1A2028] md:justify-self-end mb-2"
             variants={itemVariants}
           >
             We connect businesses and shoppers with products from around the
@@ -94,7 +94,7 @@ export default function AboutHeader({ page }: { page?: string }) {
       </motion.div>
 
       <motion.div
-        className="mt-9 overflow-hidden rounded-lg sm:mt-11"
+        className="md:mt-9 mt-5 overflow-hidden rounded-lg sm:mt-11"
         variants={headerVariants}
         initial="hidden"
         animate="visible"

@@ -132,7 +132,7 @@ export default function Brands() {
           {brands.map((brand) => (
             <div
               key={brand.name}
-              className="flex h-22 w-42 shrink-0 snap-start items-center justify-center rounded-2xl border-2 border-[#e8e5e2] bg-white sm:h-[90px] sm:w-[calc((100%-40px)/3)] lg:w-[calc((100%-100px)/6)]"
+              className="flex h-18 w-42 shrink-0 snap-start items-center justify-center rounded-2xl border-2 border-[#e8e5e2] bg-white sm:h-22.5 sm:w-[calc((100%-40px)/3)] lg:w-[calc((100%-100px)/6)]"
             >
               <span className={brand.style}>{brand.name}</span>
             </div>

@@ -1,8 +1,10 @@
 import { Handbag, ShoppingBag } from "lucide-react";
+import Link from "next/link";
 
 export default function CartIcon() {
   return (
-    <div
+    <Link
+      href="/cart"
       aria-label="Your Cart, 0 items, total $0.00"
       className="flex shrink-0 items-center gap-3.5"
       role="group"
@@ -15,10 +17,8 @@ export default function CartIcon() {
       </div>
       <div className="flex flex-col leading-tight">
         <span className=" text-[#9CA3AF] font-medium ">Your Cart</span>
-        <span className="mt-1 text-lg font-bold">
-          $0.00
-        </span>
+        <span className="mt-1 text-lg font-bold">$0.00</span>
       </div>
-    </div>
+    </Link>
   );
 }

@@ -146,6 +146,9 @@
   .page-padding{
     @apply py-10;
   }
+  .title{
+    @apply text-3xl font-bold;
+  }
 }
 
 :root {

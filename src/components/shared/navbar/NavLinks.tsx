@@ -10,7 +10,7 @@ const navLinks = [
   },
   {
     name: "All Products",
-    href: "/all-products",
+    href: "/products",
   },
   {
     name: "Shop by Brand",

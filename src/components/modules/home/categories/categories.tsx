@@ -182,7 +182,7 @@ export default function Categories() {
               <Link
                 aria-label={`Explore ${category.name} products`}
                 className="relative aspect-[0.57/1] w-37 shrink-0 snap-start overflow-hidden bg-slate-200 sm:w-[calc((100%-36px)/4)] lg:w-[calc((100%-72px)/7)]"
-                href="/all-products"
+                href="/products"
                 key={`${category.name}-${index}`}
                 draggable={false}
               >

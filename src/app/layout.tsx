@@ -13,7 +13,10 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "MR International LLC",
+  title: {
+    default: "MR International LLC",
+    template: "%s | MR International LLC",
+  },
   description:
     "Discover products from around the world with MR International — global shopping, made simple.",
 };

@@ -11,8 +11,8 @@ export function ViewAllButton({ className, children = "View All", ...props }: Pr
       variant="outline"
       {...props}
       className={cn(
-        "group relative h-fit gap-3 overflow-hidden rounded-full border-[1.5px] border-neutral-900",
-        "bg-transparent px-8 py-1.5 text-lg font-normal text-neutral-900 shadow-none",
+        "group relative h-fit md:gap-3 gap-1.5 overflow-hidden rounded-full border-[1.5px] border-neutral-900",
+        "bg-transparent md:px-8 px-5 py-1.5 md:text-lg  font-normal text-neutral-900 shadow-none",
         "transition-colors duration-500 hover:bg-transparent hover:text-white cursor-pointer",
         className
       )}
@@ -24,7 +24,7 @@ export function ViewAllButton({ className, children = "View All", ...props }: Pr
       />
 
       <span className="relative z-10">{children}</span>
-      <ArrowUpRight className="relative z-10 size-5 group-hover:rotate-45 duration-300 transition-all" strokeWidth={1.5} />
+      <ArrowUpRight className="relative z-10 md:size-5 size-4 group-hover:rotate-45 duration-300 transition-all" strokeWidth={1.5} />
     </Button>
   );
 }
