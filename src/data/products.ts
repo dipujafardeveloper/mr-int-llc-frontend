@@ -1,10 +1,8 @@
-import type {  TProducts } from "@/types/products";
+import type { TProducts } from "@/types/products";
 
-
-
-const featuredProducts: TProducts[] = [
+const productsData: TProducts[] = [
   {
-    id: "camera",
+    id: "catalog-product-1",
     image: "/image/product/camera.jpg",
     imageAlt: "Black mirrorless camera with a zoom lens",
     category: "Computer & Laptop",
@@ -16,7 +14,7 @@ const featuredProducts: TProducts[] = [
     stockCount: 20,
   },
   {
-    id: "smartphone",
+    id: "catalog-product-2",
     image: "/image/product/smartphone.jpg",
     imageAlt: "Modern smartphone with a vivid display",
     category: "Computer & Laptop",
@@ -29,7 +27,7 @@ const featuredProducts: TProducts[] = [
     stockCount: 20,
   },
   {
-    id: "black-headphones",
+    id: "catalog-product-3",
     image: "/image/product/headphones.jpg",
     imageAlt: "Over-ear wireless headphones",
     category: "Computer & Laptop",
@@ -41,7 +39,7 @@ const featuredProducts: TProducts[] = [
     stockCount: 20,
   },
   {
-    id: "red-headphones",
+    id: "catalog-product-4",
     image: "/image/product/red-headphones.jpg",
     imageAlt: "Black and red over-ear headphones",
     category: "Computer & Laptop",
@@ -54,10 +52,14 @@ const featuredProducts: TProducts[] = [
   },
 ];
 
-export const products: TProducts[] = [
-  ...featuredProducts,
-  ...featuredProducts.map((product) => ({
+export const featuredProductsData: TProducts[] = [
+  ...productsData,
+  ...productsData.map((product) => ({
     ...product,
-    id: `${product.id}-second-row`,
   })),
 ];
+
+export const products = featuredProductsData.map((product, index) => ({
+  ...product,
+  id: `catalog-product-${index + 1}`,
+}));

@@ -34,22 +34,11 @@ export default function HeroBanner({ data }: TProps) {
 
   return (
     <div className="relative overflow-hidden">
-      {/* Navbar */}
-      <motion.div
-        initial={{ opacity: 0, y: -20, filter: "blur(6px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className={cn(
-          "absolute top-10 w-full z-30",
-          data?.authPage && "hidden",
-        )}
-      >
-        {/* <Navbar variant="transparent" authPage={data?.authPage || false} /> */}
-      </motion.div>
+  
 
       <div
         className={cn(
-          "relative min-h-screen w-full flex flex-col justify-end pb-11 overflow-hidden",
+          "relative min-h-[calc(100vh-44px)] w-full flex flex-col justify-end pb-11 overflow-hidden",
           data?.className,
         )}
       >
@@ -58,7 +47,7 @@ export default function HeroBanner({ data }: TProps) {
           initial={{ scale: 1.15 }}
           animate={{ scale: 1 }}
           transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1] }}
-          style={{ backgroundImage: `url('/banner_image.png')` }}
+          style={{ backgroundImage: `url('/image/auth_banner_image.png')` }}
           className="absolute inset-0 bg-cover bg-center will-change-transform"
         />
 

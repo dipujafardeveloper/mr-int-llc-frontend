@@ -29,9 +29,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <TopInfo />
-        <Navbar />
-        <div className={"min-h-[calc(100vh-160px)]"}>{children}</div>
-        <Footer />
+
+        <div>{children}</div>
       </body>
     </html>
   );

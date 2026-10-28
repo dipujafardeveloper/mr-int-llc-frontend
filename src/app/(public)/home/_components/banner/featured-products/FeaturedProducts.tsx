@@ -8,12 +8,10 @@ export default function FeaturedProducts() {
     <Container>
       <SectionTitle title="Shop by category" />
       <section aria-label="Featured products" className="lg:mt-10 mt-7">
-        <div>
-          <div className="grid w-full grid-cols-2 md:gap-5 gap-3 lg:grid-cols-4 md:grid-cols-3">
-            {products.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </div>
+        <div className="grid w-full grid-cols-2 md:gap-5 gap-3 lg:grid-cols-4 md:grid-cols-3">
+          {products.map((product) => (
+            <ProductCard key={product.id} {...product} />
+          ))}
         </div>
       </section>
     </Container>

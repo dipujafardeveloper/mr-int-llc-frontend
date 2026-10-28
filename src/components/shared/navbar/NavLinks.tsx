@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const navLinks = [
   {
     name: "Home",
-    href: "/",
+    href: "/home",
   },
   {
     name: "All Products",
@@ -35,6 +35,16 @@ const navLinks = [
 ];
 export default function NavLinks() {
   const pathName = usePathname();
+
+  const isActive = (link: { href: string; name: string }) => {
+    if (pathName === link.href) {
+      return true;
+    }
+    if (pathName.includes(link.href)) {
+      return true;
+    }
+    return false;
+  };
   return (
     <nav
       aria-label="Main navigation"
@@ -47,7 +57,7 @@ export default function NavLinks() {
           aria-current={pathName === link.href ? "page" : undefined}
           className={cn(
             "group relative inline-block pb-2 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:origin-center after:bg-[#B75A22] after:transition-transform after:duration-300 after:content-[''] hover:after:scale-x-100 focus-visible:after:scale-x-100 hover:scale-95 duration-300 ease-in-out transition-all",
-            pathName === link.href
+            isActive(link)
               ? "font-semibold text-[#B75A22] after:scale-x-100"
               : "after:scale-x-0",
           )}

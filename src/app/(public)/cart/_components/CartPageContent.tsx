@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import CartItemsPanel from "./CartItemsPanel";
 import CartSummary from "./CartSummary";
-import { initialCartItems, type CartItem } from "./cart.data";
+import { initialCartItems, type CartItem } from "../../../../data/cart.data";
 
 export default function CartPageContent() {
   const [items, setItems] = useState(initialCartItems);

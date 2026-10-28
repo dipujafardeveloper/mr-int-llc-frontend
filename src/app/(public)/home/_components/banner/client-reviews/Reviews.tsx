@@ -2,12 +2,14 @@
 
 import Container from "@/components/container/Container";
 import PageSectionTitle from "@/components/shared/section/PageSectionTitle";
+import { animate, motion, useMotionValue } from "motion/react";
 import { Star } from "lucide-react";
 import {
   useCallback,
   useEffect,
   useRef,
   useState,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 
 const reviews = [
@@ -53,34 +55,52 @@ const reviews = [
   },
 ];
 
+const transition = {
+  type: "spring" as const,
+  stiffness: 240,
+  damping: 30,
+  mass: 0.9,
+};
+
 export default function Reviews() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    startOffset: number;
+  } | null>(null);
+  const animationRef = useRef<ReturnType<typeof animate> | null>(null);
+  const x = useMotionValue(0);
   const [activeIndex, setActiveIndex] = useState(2);
-  const activeIndexRef = useRef(2);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const getSlideOffset = useCallback((index: number) => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    const slide = track?.children.item(index) as HTMLElement | null;
+
+    if (!viewport || !slide) return 0;
+
+    return slide.offsetLeft + slide.offsetWidth / 2 - viewport.clientWidth / 2;
+  }, []);
 
   const snapToReview = useCallback(
-    (index: number, behavior: ScrollBehavior = "smooth") => {
-      const viewport = viewportRef.current;
+    (index: number, immediate = false) => {
       const boundedIndex = Math.max(0, Math.min(reviews.length - 1, index));
-      const slide = trackRef.current?.children.item(boundedIndex) as
-        | HTMLElement
-        | null;
-      if (!viewport || !slide) return;
+      const targetOffset = getSlideOffset(boundedIndex);
+      animationRef.current?.stop();
 
-      const viewportLeft = viewport.getBoundingClientRect().left;
-      const slideBounds = slide.getBoundingClientRect();
-      const targetLeft =
-        viewport.scrollLeft +
-        slideBounds.left -
-        viewportLeft +
-        slideBounds.width / 2 -
-        viewport.clientWidth / 2;
-      viewport.scrollTo({ left: targetLeft, behavior });
-      activeIndexRef.current = boundedIndex;
+      if (immediate) {
+        x.set(-targetOffset);
+      } else {
+        animationRef.current = animate(x, -targetOffset, transition);
+      }
+
       setActiveIndex(boundedIndex);
     },
-    [],
+    [getSlideOffset, x],
   );
 
   useEffect(() => {
@@ -88,66 +108,91 @@ export default function Reviews() {
     const track = trackRef.current;
     if (!viewport || !track) return;
 
-    const updateSlideSizes = () => {
-      const cardWidth =
-        viewport.clientWidth *
-        (window.matchMedia("(min-width: 768px)").matches ? 0.44 : 0.76);
-      const sidePadding = (viewport.clientWidth - cardWidth) / 2;
-      track.style.setProperty("--review-slide-width", `${cardWidth}px`);
-      track.style.paddingInline = `${sidePadding}px`;
-      snapToReview(activeIndexRef.current, "instant");
-    };
-
-    const handleScroll = () => {
-      const viewportCenter = viewport.scrollLeft + viewport.clientWidth / 2;
-      const viewportLeft = viewport.getBoundingClientRect().left;
-      const nearestIndex = Array.from(track.children)
-        .slice(0, reviews.length)
-        .reduce(
-          (closestIndex, child, index) => {
-            const slide = child as HTMLElement;
-            const closestSlide = track.children.item(
-              closestIndex,
-            ) as HTMLElement;
-            const slideBounds = slide.getBoundingClientRect();
-            const closestBounds = closestSlide.getBoundingClientRect();
-            const slideCenter =
-              slideBounds.left -
-              viewportLeft +
-              viewport.scrollLeft +
-              slideBounds.width / 2;
-            const closestCenter =
-              closestBounds.left -
-              viewportLeft +
-              viewport.scrollLeft +
-              closestBounds.width / 2;
-
-            return Math.abs(slideCenter - viewportCenter) <
-              Math.abs(closestCenter - viewportCenter)
-              ? index
-              : closestIndex;
-          },
-          0,
-        );
-
-      if (nearestIndex !== activeIndexRef.current) {
-        activeIndexRef.current = nearestIndex;
-        setActiveIndex(nearestIndex);
-      }
-    };
-
-    updateSlideSizes();
-    viewport.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", updateSlideSizes);
-    const resizeObserver = new ResizeObserver(updateSlideSizes);
+    snapToReview(activeIndex, true);
+    const resizeObserver = new ResizeObserver(() => {
+      snapToReview(activeIndex, true);
+    });
     resizeObserver.observe(viewport);
+    resizeObserver.observe(track);
 
     return () => {
-      viewport.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", updateSlideSizes);
       resizeObserver.disconnect();
+      animationRef.current?.stop();
     };
-  }, [snapToReview]);
+  }, [activeIndex, snapToReview]);
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) {
+      return;
+    }
+
+    animationRef.current?.stop();
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startOffset: x.get(),
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - drag.startX;
+    const deltaY = event.clientY - drag.startY;
+    if (Math.abs(deltaX) < 5 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+
+    setIsDragging(true);
+    x.set(drag.startOffset + deltaX);
+  };
+
+  const finishPointerDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    dragRef.current = null;
+    setIsDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    const deltaX = event.clientX - drag.startX;
+    const swipeThreshold = Math.max(36, event.currentTarget.clientWidth * 0.08);
+    if (Math.abs(deltaX) >= swipeThreshold) {
+      snapToReview(activeIndex + (deltaX < 0 ? 1 : -1));
+      return;
+    }
+
+    const track = trackRef.current;
+    const viewport = viewportRef.current;
+    if (!track || !viewport) return;
+
+    const nearestIndex = Array.from(track.children).reduce(
+      (closestIndex, child, index) => {
+        const slide = child as HTMLElement;
+        const center =
+          slide.offsetLeft +
+          slide.offsetWidth / 2 +
+          x.get() -
+          viewport.clientWidth / 2;
+        const closestSlide = track.children.item(closestIndex) as HTMLElement;
+        const closestCenter =
+          closestSlide.offsetLeft +
+          closestSlide.offsetWidth / 2 +
+          x.get() -
+          viewport.clientWidth / 2;
+
+        return Math.abs(center) < Math.abs(closestCenter)
+          ? index
+          : closestIndex;
+      },
+      0,
+    );
+
+    snapToReview(nearestIndex);
+  };
 
   return (
     <section aria-label="Customer reviews">
@@ -160,15 +205,21 @@ export default function Reviews() {
         <div className="mt-8 sm:mt-10">
           <div
             ref={viewportRef}
-            className="overflow-x-auto overflow-y-hidden snap-x snap-mandatory"
-            style={{ scrollbarWidth: "none" }}
+            className={`touch-pan-y overflow-hidden ${
+              isDragging ? "cursor-grabbing select-none" : "cursor-grab"
+            }`}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={finishPointerDrag}
+            onPointerCancel={finishPointerDrag}
             role="region"
             aria-label="Customer review carousel"
             aria-roledescription="carousel"
           >
-            <div
+            <motion.div
               ref={trackRef}
-              className="flex w-max min-w-full items-center"
+              className="flex w-full items-center px-[13%] sm:px-[28%]"
+              style={{ x }}
             >
               {reviews.map((review, index) => {
                 const isActive = index === activeIndex;
@@ -176,7 +227,7 @@ export default function Reviews() {
                 return (
                   <article
                     key={review.name}
-                    className={`flex h-62.5 w-[var(--review-slide-width)] shrink-0 snap-center items-center justify-center py-4 transition-[transform,opacity] duration-300 sm:h-57.5 ${
+                    className={`flex h-62.5 w-[74%] shrink-0 items-center justify-center py-4 transition-[transform,opacity] duration-300 sm:h-57.5 sm:w-[44%] ${
                       isActive
                         ? "z-10 scale-100 opacity-100"
                         : "scale-[0.82] opacity-55"
@@ -189,8 +240,8 @@ export default function Reviews() {
                     <div
                       className={`relative flex w-full flex-col justify-between rounded-2xl border border-[#f0e8df] bg-white px-5 pb-5 pt-8 shadow-[0_18px_50px_rgba(126,73,35,0.12)] transition-[height,box-shadow] duration-300 sm:px-6 ${
                         isActive
-                          ? "h-[204px] sm:h-[190px] sm:shadow-[0_24px_60px_rgba(126,73,35,0.18)]"
-                          : "h-[174px] sm:h-[150px]"
+                          ? "h-51 sm:h-47.5 sm:shadow-[0_24px_60px_rgba(126,73,35,0.18)]"
+                          : "h-43.5 sm:h-37.5"
                       }`}
                     >
                       {isActive && (
@@ -247,7 +298,7 @@ export default function Reviews() {
                   </article>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
 
           <div className="mt-3 flex justify-center gap-1.5" aria-label="Choose a review">
@@ -255,7 +306,7 @@ export default function Reviews() {
               <button
                 key={review.name}
                 type="button"
-                onClick={() => snapToReview(index, "instant")}
+                onClick={() => snapToReview(index)}
                 aria-label={`Show review ${index + 1}`}
                 aria-current={activeIndex === index ? "true" : undefined}
                 className={`size-2.5 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#984a17] ${

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Check, Minus, Plus, Trash2 } from "lucide-react";
-import type { CartItem } from "./cart.data";
+import type { CartItem } from "../../../../data/cart.data";
 
 interface CartItemRowProps {
   item: CartItem;
@@ -49,11 +49,14 @@ export default function CartItemRow({
         <h2 className="truncate text-sm font-semibold text-[#24231F] sm:text-base">
           {item.title}
         </h2>
-        <p className="mt-1 text-xs text-[#8B8A85] sm:text-sm">{item.variant}</p>
+        <p className="mt-1 text-xs text-[#A3A3A3] sm:text-sm">
+          <span className="text-[#A3A3A3]">Color: </span>
+          <span className="text-[#404040] font-medium">{item?.variant}</span>
+        </p>
       </div>
 
       <div className="col-start-2 col-end-4 flex items-center justify-end gap-3 sm:col-start-4 sm:col-end-5 sm:flex-col sm:items-end sm:gap-2">
-        <span className="text-sm font-bold text-[#24231F]">
+        <span className="text-lg font-bold text-[#171717]">
           {formatPrice(item.price * item.quantity)}
         </span>
         <div className="flex items-center gap-2">
@@ -61,13 +64,13 @@ export default function CartItemRow({
             type="button"
             onClick={() => onRemove(item.id)}
             aria-label={`Remove ${item.title}`}
-            className="inline-flex cursor-pointer text-[#C8C7C2] transition-colors hover:text-rose-600"
+            className="inline-flex cursor-pointer text-[#D4D4D4] transition-colors hover:text-rose-600"
           >
-            <Trash2 aria-hidden="true" className="size-3.5" />
+            <Trash2 aria-hidden="true" className="size-4" />
           </button>
           <div
             aria-label={`Quantity ${item.quantity}`}
-            className="flex items-center rounded-full bg-[#F4F4F2] text-xs text-[#55544F]"
+            className="flex items-center rounded-full bg-[#F5F5F5] text-sm text-[#262626]"
           >
             <button
               type="button"

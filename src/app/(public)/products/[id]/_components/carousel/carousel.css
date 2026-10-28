@@ -1,0 +1,146 @@
+.embla {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.embla__viewport {
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+  border: 1px solid #e9e6df;
+  border-radius: 0.75rem;
+  background: #f7f6f3;
+}
+
+.embla__container {
+  display: flex;
+  width: 100%;
+}
+
+.embla__slide {
+  position: relative;
+  flex: 0 0 100%;
+  min-width: 0;
+  aspect-ratio: 1.12 / 1;
+}
+
+.embla__image {
+  cursor: zoom-in;
+  transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%);
+  transition: transform 120ms ease-out;
+}
+
+.embla__viewport.is-zoomed .embla__image {
+  transform: scale(2);
+  cursor: zoom-out;
+}
+
+.embla__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 1px solid #e9e6df;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 90%);
+  color: #24231f;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  cursor: pointer;
+}
+
+.embla__arrow--previous {
+  left: 0.75rem;
+}
+
+.embla__arrow--next {
+  right: 0.75rem;
+}
+
+.embla-thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.embla-thumbs__viewport {
+  overflow: hidden;
+}
+
+.embla-thumbs__container {
+  display: flex;
+}
+
+.embla-thumbs__slide {
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.embla-thumbs__slide__button {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  clip-path: inset(0);
+  border: 1px solid #e9e6df;
+  border-radius: 0.5rem;
+  background: #f7f6f3;
+  cursor: pointer;
+  contain: layout paint;
+  transition: border-color 150ms ease, opacity 150ms ease;
+}
+
+.embla-thumbs__slide__button:not(.is-selected) {
+  opacity: 0.65;
+}
+
+.embla-thumbs__slide__button.is-selected {
+  border-color: #99512f;
+  opacity: 1;
+}
+
+.embla-thumbs__image-frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+  contain: strict;
+}
+
+.embla-thumbs__image {
+  transition: transform 180ms ease-out;
+}
+
+.embla-thumbs__slide__button:hover .embla-thumbs__image,
+.embla-thumbs__slide__button:focus-visible .embla-thumbs__image {
+  transform: scale(1.2);
+}
+
+.embla__arrow:focus-visible,
+.embla-thumbs__slide__button:focus-visible {
+  outline: 2px solid #99512f;
+  outline-offset: 2px;
+}
+
+@media (max-width: 639px) {
+  .embla__slide {
+    aspect-ratio: 1 / 1;
+  }
+
+  .embla-thumbs {
+    gap: 0.5rem;
+  }
+
+  .embla__arrow {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}

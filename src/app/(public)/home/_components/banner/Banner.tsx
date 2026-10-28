@@ -177,7 +177,7 @@ export default function Banner() {
   return (
     <section
       aria-label="Featured banners"
-      className="overflow-hidden py-5 "
+      className="overflow-hidden pt-5 "
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocusCapture={() => setIsPaused(true)}
@@ -238,7 +238,7 @@ export default function Banner() {
               onClick={() => snapToBanner(index)}
               aria-label={`Show banner ${index + 1}`}
               aria-current={activeIndex === index ? "true" : undefined}
-              className={`size-2 rounded-full transition-colors ${
+              className={`size-3 rounded-full transition-colors ${
                 activeIndex === index ? "bg-[#d7b98a]" : "bg-slate-200"
               }`}
             />

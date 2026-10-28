@@ -1,5 +1,5 @@
 import { Trash2 } from "lucide-react";
-import type { CartItem } from "./cart.data";
+import type { CartItem } from "../../../../data/cart.data";
 import CartItemRow from "./CartItemRow";
 
 interface CartItemsPanelProps {
@@ -22,7 +22,7 @@ export default function CartItemsPanel({
       <header className="mb-1 flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold tracking-tight text-[#24231F] sm:text-3xl">
           Carts{" "}
-          <span className="ml-1 align-middle text-xs font-medium text-[#A7A6A1]">
+          <span className="ml-1 align-middle text-sm text-[#A3A3A3] font-bold">
             {String(items.length).padStart(2, "0")}
           </span>
         </h1>
