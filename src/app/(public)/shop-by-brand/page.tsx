@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Container from "@/components/container/Container";
 import PageSectionTitle from "@/components/shared/section/PageSectionTitle";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Shop by Brand",
@@ -16,16 +17,43 @@ const brands: {
   height: number;
   blue?: boolean;
 }[] = [
-  { name: "MR International", image: "/image/brand-logo/logo.png", width: 77, height: 38 },
-  { name: "Samsung", image: "/image/brand-logo/SAMSUNG.png", width: 162, height: 26, blue: true },
+  {
+    name: "MR International",
+    image: "/image/brand-logo/logo.png",
+    width: 77,
+    height: 38,
+  },
+  {
+    name: "Samsung",
+    image: "/image/brand-logo/SAMSUNG.png",
+    width: 162,
+    height: 26,
+    blue: true,
+  },
   { name: "Nike", image: "/image/brand-logo/NIKE.png", width: 101, height: 32 },
-  { name: "Levi's", image: "/image/brand-logo/Levi's.png", width: 85, height: 23 },
-  { name: "P&G", image: "/image/brand-logo/P&G.png", width: 85, height: 29, blue: true },
-  { name: "L'Oréal", image: "/image/brand-logo/L'ORÉAL.png", width: 124, height: 26 },
+  {
+    name: "Levi's",
+    image: "/image/brand-logo/Levi's.png",
+    width: 85,
+    height: 23,
+  },
+  {
+    name: "P&G",
+    image: "/image/brand-logo/P&G.png",
+    width: 85,
+    height: 29,
+    blue: true,
+  },
+  {
+    name: "L'Oréal",
+    image: "/image/brand-logo/L'ORÉAL.png",
+    width: 124,
+    height: 26,
+  },
 ];
 
 const brandRows = Array.from({ length: 6 }, (_, row) =>
-  brands.map((brand) => ({ ...brand, key: `${row}-${brand.name}` }))
+  brands.map((brand) => ({ ...brand, key: `${row}-${brand.name}` })),
 ).flat();
 
 export default function ShopByBrandPage() {
@@ -42,13 +70,14 @@ export default function ShopByBrandPage() {
           className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6"
         >
           {brandRows.map((brand) => (
-            <li
-              className="flex h-16.5 items-center justify-center rounded-xl border border-[#E8E5E2] bg-white px-3 transition-colors hover:border-[#D4CEC8] sm:h-[66px]"
+            <Link
+              href={`/shop-by-brand/${encodeURIComponent(brand.name.toLowerCase())}`}
+              className="flex h-16.5 items-center justify-center rounded-xl border border-[#E8E5E2] bg-white px-3 transition-colors hover:border-[#D4CEC8] sm:h-16.5"
               key={brand.key}
             >
               <Image
                 alt={brand.name}
-                className="h-auto max-h-8 w-auto max-w-22.5 object-contain sm:max-w-[108px]"
+                className="h-auto max-h-8 w-auto max-w-22.5 object-contain sm:max-w-27"
                 height={brand.height}
                 src={brand.image}
                 style={
@@ -61,7 +90,7 @@ export default function ShopByBrandPage() {
                 }
                 width={brand.width}
               />
-            </li>
+            </Link>
           ))}
         </ul>
       </main>

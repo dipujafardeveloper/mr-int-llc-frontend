@@ -11,7 +11,7 @@ import { useUpdateSearchParams } from "@/hooks/useUpdateSearchParams";
 import FilterOptionGroup from "./FilterOptionGroup";
 import { FilterIcon } from "@/icons";
 
-export default function ProductFilterSidebar() {
+export default function ProductFilterSidebar({ page }: { page?: string }) {
   const searchParams = useSearchParams();
   const updateSearchParams = useUpdateSearchParams();
   const selectedBrands = searchParams.get("brand")?.split(",").filter(Boolean) ?? [];
@@ -81,12 +81,12 @@ export default function ProductFilterSidebar() {
       </section>
 
       <div className="space-y-5">
-        <FilterOptionGroup
+        { page !== "brand" && <FilterOptionGroup
           title="Brand"
           options={brandOptions.map((brand) => ({ label: brand, value: brand }))}
           selectedValues={selectedBrands}
           onChange={(brand) => toggleSearchParamValue("brand", brand)}
-        />
+        />}
         <FilterOptionGroup
           title="Category"
           options={categoryOptions.map((category) => ({
