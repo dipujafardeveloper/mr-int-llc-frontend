@@ -23,9 +23,10 @@ export default function ProductCard({
   badge,
   soldCount,
   stockCount,
-  initialFavorite = false,
-  onFavoriteChange,
-}: TProducts) {
+  // initialFavorite = false,
+  // onFavoriteChange,
+  filled = false,
+}: TProducts & { filled?: boolean }) {
   const safeRating = Math.min(5, Math.max(0, rating));
 
   const productImage = (
@@ -66,7 +67,7 @@ export default function ProductCard({
           </span>
         )}
 
-        <FavoriteIcon />
+        <FavoriteIcon filled={filled} />
       </div>
 
       <div className="flex flex-1 flex-col xl:p-6 lg:p-4 p-3  ">

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff } from "lucide-react";
+import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import logo from "@/assets/logo.png";
 import Image from "next/image";
@@ -15,7 +15,9 @@ import { toast } from "sonner";
 
 // Zod validation schema
 const loginSchema = z.object({
-  // userType: z.enum(["Buyer", "Seller"] as const, "Please select a user type"),
+  userType: z.enum(["Buyer", "Seller"], {
+    error: "Please select a user type",
+  }),
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
   rememberMe: z.boolean().default(false),
@@ -40,7 +42,7 @@ export default function LoginForm() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema as any),
     defaultValues: {
-      // userType: "Buyer",
+      userType: "Buyer",
       email: "",
       password: "",
       rememberMe: false,
@@ -103,7 +105,7 @@ export default function LoginForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* User Type Dropdown */}
-        {/* <div>
+        <div>
           <label
             htmlFor="userType"
             className="mb-2 block text-sm font-medium text-gray-900"
@@ -116,8 +118,8 @@ export default function LoginForm() {
               {...register("userType")}
               className="w-full appearance-none rounded-lg border border-[#3D3D3D] bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
             >
-              <option value="Buyer">Buyer</option>
-              <option value="Seller">Seller</option>
+              <option value="Buyer">Retail Customer</option>
+              <option value="Seller">Wholesale Customer</option>
             </select>
             <ChevronDown className="pointer-events-none absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
           </div>
@@ -126,7 +128,7 @@ export default function LoginForm() {
               {errors.userType.message}
             </p>
           )}
-        </div> */}
+        </div>
 
         {/* Email Input */}
         <div>

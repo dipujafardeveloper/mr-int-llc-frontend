@@ -7,6 +7,7 @@ import FeaturedProducts from "./_components/banner/featured-products/FeaturedPro
 import WholesaleBanner from "@/components/shared/banner/WholesaleBanner";
 import Reviews from "./_components/banner/client-reviews/Reviews";
 import FAQ from "./_components/banner/Faq/FAQ";
+import Deals from "./_components/deals/Deals";
 
 export default function page() {
   return (
@@ -21,6 +22,7 @@ export default function page() {
         <FeaturedProducts />
       </div>
       <WholesaleBanner />
+      <Deals />
       <Reviews />
       <FAQ />
     </main>

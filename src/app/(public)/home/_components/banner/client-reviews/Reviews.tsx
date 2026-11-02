@@ -3,7 +3,7 @@
 import Container from "@/components/container/Container";
 import PageSectionTitle from "@/components/shared/section/PageSectionTitle";
 import { animate, motion, useMotionValue } from "motion/react";
-import { Star } from "lucide-react";
+import {  Star } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -11,6 +11,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import { QuoteIcon } from "@/icons";
 
 const reviews = [
   {
@@ -75,6 +76,8 @@ export default function Reviews() {
   const x = useMotionValue(0);
   const [activeIndex, setActiveIndex] = useState(2);
   const [isDragging, setIsDragging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
 
   const getSlideOffset = useCallback((index: number) => {
     const viewport = viewportRef.current;
@@ -121,6 +124,16 @@ export default function Reviews() {
     };
   }, [activeIndex, snapToReview]);
 
+  useEffect(() => {
+    if (isDragging || isHovered || hasFocus) return;
+
+    const intervalId = window.setInterval(() => {
+      snapToReview((activeIndex + 1) % reviews.length);
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, [activeIndex, hasFocus, isDragging, isHovered, snapToReview]);
+
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) {
       return;
@@ -133,6 +146,7 @@ export default function Reviews() {
       startY: event.clientY,
       startOffset: x.get(),
     };
+    setIsDragging(true);
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
@@ -202,7 +216,17 @@ export default function Reviews() {
           subTitle="Real stories from customers who shop with us."
         />
 
-        <div className="mt-8 sm:mt-10">
+          <div
+            className="mt-8 sm:mt-10"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onFocusCapture={() => setHasFocus(true)}
+            onBlurCapture={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                setHasFocus(false);
+              }
+            }}
+          >
           <div
             ref={viewportRef}
             className={`touch-pan-y overflow-hidden ${
@@ -218,7 +242,7 @@ export default function Reviews() {
           >
             <motion.div
               ref={trackRef}
-              className="flex w-full items-center px-[13%] sm:px-[28%]"
+              className="flex w-full items-center"
               style={{ x }}
             >
               {reviews.map((review, index) => {
@@ -227,7 +251,7 @@ export default function Reviews() {
                 return (
                   <article
                     key={review.name}
-                    className={`flex h-62.5 w-[74%] shrink-0 items-center justify-center py-4 transition-[transform,opacity] duration-300 sm:h-57.5 sm:w-[44%] ${
+                    className={`flex h-62.5 w-full shrink-0 items-center justify-center py-4 transition-[transform,opacity] duration-300 sm:h-57.5 md:w-1/3 ${
                       isActive
                         ? "z-10 scale-100 opacity-100"
                         : "scale-[0.82] opacity-55"
@@ -249,12 +273,12 @@ export default function Reviews() {
                           aria-hidden="true"
                           className="absolute -top-5 left-5 flex size-10 items-center justify-center rounded-full bg-[#f4e7d4] text-3xl font-bold leading-none text-[#984a17]"
                         >
-                          “
+                          <QuoteIcon  />
                         </span>
                       )}
 
                       <p
-                        className={`line-clamp-3 text-[13px] leading-[1.4] text-[#242424] sm:text-sm ${
+                        className={`line-clamp-3 lg:text-base leading-[1.4] text-black text-sm ${
                           isActive ? "" : "text-slate-500"
                         }`}
                       >
@@ -273,7 +297,7 @@ export default function Reviews() {
                             <p className="truncate text-xs font-bold text-[#222] sm:text-sm">
                               {review.name}
                             </p>
-                            <p className="truncate text-[9px] leading-tight text-[#999] sm:text-[10px]">
+                            <p className="truncate text-[10px] leading-tight text-[#505050] sm:text-[10px]">
                               {review.role}
                             </p>
                           </div>

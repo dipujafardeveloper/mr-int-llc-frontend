@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface CartSummaryProps {
   selectedItemCount: number;
   subtotal: number;
@@ -50,9 +52,7 @@ export default function CartSummary({
           <div className="space-y-3 border-t border-[#E9E9E7] pt-4">
             <div className="flex items-center justify-between gap-3">
               <dt className="text-[#737373]">Taxes</dt>
-              <dd className="font-bold text-rose-500">
-                +{formatPrice(taxes)}
-              </dd>
+              <dd className="font-bold text-rose-500">+{formatPrice(taxes)}</dd>
             </div>
             <div className="flex items-center justify-between gap-3 mb-5">
               <dt className="text-[#737373]">Discount</dt>
@@ -63,7 +63,9 @@ export default function CartSummary({
           </div>
 
           <div className="flex items-center justify-between gap-3 border-t border-[#E9E9E7] pt-4">
-            <dt className="text-xl font-medium text-[#55544F]">Final payment</dt>
+            <dt className="text-xl font-medium text-[#55544F]">
+              Final payment
+            </dt>
             <dd className="text-base font-bold text-[#24231F]">
               {formatPrice(total)}
             </dd>
@@ -86,9 +88,11 @@ export default function CartSummary({
         </div>
       </div>
 
-      <div className="mt-4 w-full rounded-full bg-[#995618] px-5 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-white">
-        Checkout
-      </div>
+      <Link href="/cart/shipping-address">
+        <button className="mt-4 w-full rounded-full bg-secondary-color px-5 py-3.5 text-center text-xs font-bold uppercase tracking-wide text-white cursor-pointer hover:bg-[#5a3614] duration-300">
+          Checkout
+        </button>
+      </Link>
     </aside>
   );
 }

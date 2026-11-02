@@ -102,16 +102,16 @@ async function ProductDetailsContent({ params }: ProductDetailsPageProps) {
           <section aria-labelledby="product-title" className="min-w-0">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="mb-1 text-xs font-medium uppercase tracking-wide text-[#8A8D94]">
+                {/* <p className="mb-1 text-xs font-medium uppercase tracking-wide text-[#8A8D94]">
                   {product.category}
-                </p>
+                </p> */}
                 <h1
                   className="text-2xl font-bold leading-tight tracking-tight text-[#252A30] sm:text-3xl"
                   id="product-title"
                 >
                   {product.title}
                 </h1>
-                <p className="mt-2 text-xs text-[#737983]">
+                <p className="mt-2 text-xs text-[#4B5563]">
                   SKU: {product.id.toUpperCase()}
                 </p>
                 <p className="mt-2 flex items-center gap-2 text-xs font-medium text-[#348267]">
@@ -134,8 +134,8 @@ async function ProductDetailsContent({ params }: ProductDetailsPageProps) {
                 ${price.toFixed(2)}
               </p>
               {product.originalPrice !== undefined && (
-                <p className="text-sm text-[#8A8D94]">
-                  List price:{" "}
+                <p className=" text-black/60">
+                 
                   <span className="line-through">
                     ${Number(product.originalPrice).toFixed(2)}
                   </span>
@@ -143,7 +143,7 @@ async function ProductDetailsContent({ params }: ProductDetailsPageProps) {
               )}
             </div>
 
-            <div className="mt-4 space-y-3 text-sm leading-6 text-[#70747A]">
+            <div className="mt-4 space-y-3 text-sm leading-6 text-black/60">
               <p>{description}</p>
               <p>
                 For bulk orders, our team can help with availability and
@@ -152,7 +152,7 @@ async function ProductDetailsContent({ params }: ProductDetailsPageProps) {
             </div>
 
             <div className="mt-5">
-              <h2 className="text-sm font-semibold text-[#343A40]">
+              <h2 className="text-sm font-semibold text-black/60">
                 Product details
               </h2>
               <ul className="mt-2 list-disc space-y-1.5 pl-4 text-sm text-[#737983] marker:text-[#9CA3AF]">
@@ -168,20 +168,7 @@ async function ProductDetailsContent({ params }: ProductDetailsPageProps) {
 
             <ProductPurchaseControls stockCount={product.stockCount} />
 
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
-              <Link
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E4E7EC] px-4 text-center text-xs font-medium text-[#5D6470] transition hover:border-secondary-color hover:text-secondary-color"
-                href="/sign-up"
-              >
-                Sign in for Wholesale Access
-              </Link>
-              <Link
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E4E7EC] px-4 text-center text-xs font-medium text-[#5D6470] transition hover:border-secondary-color hover:text-secondary-color"
-                href="/contact-us"
-              >
-                Contact us about this product
-              </Link>
-            </div>
+          
           </section>
         </div>
       </main>

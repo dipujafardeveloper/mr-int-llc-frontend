@@ -146,7 +146,7 @@ export default function Categories() {
       }}
     >
       <Container>
-        <SectionTitle title="Shop by category" />
+        <SectionTitle title="Shop by category" btnHref="/products" />
         <div className="group relative lg:mt-10 mt-7">
           <button
             type="button"

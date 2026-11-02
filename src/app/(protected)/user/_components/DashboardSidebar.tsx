@@ -10,6 +10,9 @@ import {
   Lock,
   BadgeDollarSign,
   Heart,
+  BookAudio,
+  BanknoteArrowUp,
+  Settings,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -43,45 +46,28 @@ export default function DashboardSidebar() {
       href: "/user/dashboard",
     },
     {
-      key: "my-listings",
-      label: "My Listings",
-      icon: <HousePlus size={22} />,
-      href: "/user/my-listings",
-    },
-    {
-      key: "my-offers ",
-      label: "My Offers",
-      icon: <BadgeDollarSign size={22} />,
-      href: "/user/my-offers",
-    },
-    {
-      key: "offers-received",
-      label: "Offers Received",
-      icon: <Receipt size={22} />,
-      href: "/user/offers-received",
-    },
-    {
-      key: "analytics",
-      label: "Analytics",
-      icon: <ChartNoAxesCombined size={22} />,
-      href: "/user/analytics",
-    },
-    {
-      key: "saved-properties",
-      label: "Saved Properties",
+      key: "favorites",
+      label: "Favorites",
       icon: <Heart size={22} />,
-      href: "/user/save-properties",
+      href: "/user/favorites",
     },
     {
-      key: "edit-profile",
-      label: "Edit Profile",
-      icon: <User size={22} />,
-      href: "/user/edit-profile",
+      key: "orders",
+      label: "My Orders",
+      icon: <BookAudio size={22} />,
+      href: "/user/orders",
     },
+    {
+      key: "3pl-services",
+      label: "3PL Services",
+      icon: <BanknoteArrowUp size={22} />,
+      href: "/user/pl-services",
+    },
+   
     {
       key: "change-password",
       label: "Change Password",
-      icon: <Lock size={22} />,
+      icon: <Settings size={22} />,
       href: "/user/change-password",
     },
   ];
@@ -93,14 +79,14 @@ export default function DashboardSidebar() {
     <>
       {/* ---------- Large devices: fixed vertical sidebar ---------- */}
       <div className="hidden xl:block sticky top-0 self-start max-h-screen overflow-y-auto border border-[#ECEEF0] pr-4 h-full rounded-xl">
-        <div className="dashboard-card bg-white p-5">
+        <div className="dashboard-card bg-white p-5 w-64">
           <div className="space-y-2">
             {SIDEBAR_LINKS.map((link) => (
               <Link
                 href={link.href}
                 key={link.key}
                 className={cn(
-                  "flex items-center gap-x-3 px-5 py-3 text-gray-scale-600 transition-all duration-300 ease-in-out text-sm",
+                  "flex items-center gap-x-3 px-5 py-3 text-gray-scale-600 transition-all duration-300 ease-in-out text-base text-[#475569]",
                   isActive(link.href) &&
                     "border-l-4 border-l-[#F8F4ED] bg-[#F8F4ED] rounded-xl text-base  text-[#995618]",
                 )}
@@ -113,12 +99,12 @@ export default function DashboardSidebar() {
             <button
               onClick={handleLogout}
               type="button"
-              className="flex items-center gap-x-3 px-5 py-4 text-base text-[#BA1A1A]"
+              className="flex items-center gap-x-3 px-5 py-4 text-base text-[#475569]"
             >
-              <LogOut size={20} />
+              <LogOut size={20} color="#BA1A1A" />
               <span>Logout</span>
             </button>
-            <div className="border border-b border-[#ECEEF0] mt-5"></div>
+           
           </div>
         </div>
       </div>

@@ -88,7 +88,7 @@
   width: 100%;
   aspect-ratio: 1;
   overflow: hidden;
-  clip-path: inset(0);
+  clipPath: inset(0);
   border: 1px solid #e9e6df;
   border-radius: 0.5rem;
   background: #f7f6f3;

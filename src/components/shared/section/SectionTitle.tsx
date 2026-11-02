@@ -1,14 +1,21 @@
 import { ViewAllButton } from "@/components/ui/view-all-button";
 import { cn } from "cn";
+import Link from "next/link";
 
 export default function SectionTitle({
   title,
   subTitle,
   className,
+  btn = true,
+  subTitleClass,
+  btnHref,
 }: {
   className?: string;
   title?: string;
   subTitle?: string;
+  btn?: boolean;
+  btnHref?: string;
+  subTitleClass?: string;
 }) {
   return (
     <div className="flex justify-between items-start gap-2">
@@ -19,9 +26,20 @@ export default function SectionTitle({
         )}
       >
         <h4>{title}</h4>
-        <p className="md:text-lg text-sm text-[#1A1A1A] font-normal max-w-75">{subTitle}</p>
+        <p
+          className={cn(
+            "md:text-lg text-sm text-[#1A1A1A] font-normal max-w-75",
+            subTitleClass,
+          )}
+        >
+          {subTitle}
+        </p>
       </div>
-      <ViewAllButton />
+      {btn && (
+        <Link href={btnHref || "#"}>
+          <ViewAllButton />
+        </Link>
+      )}
     </div>
   );
 }

@@ -161,3 +161,8 @@
   --store-green: #07594e;
 }
 
+
+* {
+  scroll-behavior: smooth;
+}
+

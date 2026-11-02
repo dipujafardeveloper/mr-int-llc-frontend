@@ -110,7 +110,7 @@ export default function Brands() {
       }}
     >
       <Container>
-         <SectionTitle title="Shop by Brand" subTitle="We work with trusted global brands to bring you the best products." />
+         <SectionTitle title="Shop by Brand" subTitle="We work with trusted global brands to bring you the best products." btnHref="/shop-by-brand" />
         <div
           ref={carouselRef}
           className="flex touch-pan-y snap-x snap-mandatory gap-3 overflow-x-auto scrollbar-none sm:gap-5 lg:mt-10 mt-7 [&::-webkit-scrollbar]:hidden"

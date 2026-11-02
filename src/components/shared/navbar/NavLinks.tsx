@@ -3,7 +3,7 @@ import { cn } from "cn";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const navLinks = [
+export const navLinks = [
   {
     name: "Home",
     href: "/home",
@@ -48,7 +48,7 @@ export default function NavLinks() {
   return (
     <nav
       aria-label="Main navigation"
-      className="flex gap-7 text-base font-medium lg:text-lg "
+      className="hidden gap-7 text-base font-medium xl:flex lg:text-lg"
     >
       {navLinks.map((link) => (
         <Link

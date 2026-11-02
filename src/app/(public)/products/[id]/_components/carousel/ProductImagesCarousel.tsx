@@ -1,6 +1,7 @@
 "use client";
 
 import Image, { type ImageProps } from "next/image";
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CarouselThumbs } from "./CarouselThumbs";
@@ -13,10 +14,12 @@ type ProductImage = {
 
 type ProductImagesCarouselProps = {
   slides: ProductImage[];
+  productHref?: string;
 };
 
 export default function ProductImagesCarousel({
   slides,
+  productHref,
 }: ProductImagesCarouselProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -76,15 +79,33 @@ export default function ProductImagesCarousel({
             className="embla__slide"
             role="group"
           >
-            <Image
-              alt={selectedSlide.alt}
-              className="embla__image h-full w-full object-contain p-5 sm:p-8"
-              fill
-              loading="eager"
-              ref={zoomImageRef}
-              sizes="(max-width: 1023px) 100vw, 48vw"
-              src={selectedSlide.url}
-            />
+            {productHref ? (
+              <Link
+                href={productHref}
+                aria-label={`View ${selectedSlide.alt} product details`}
+                className="absolute inset-0"
+              >
+                <Image
+                  alt={selectedSlide.alt}
+                  className="embla__image h-full w-full object-contain p-5 sm:p-8"
+                  fill
+                  loading="eager"
+                  ref={zoomImageRef}
+                  sizes="(max-width: 1023px) 100vw, 48vw"
+                  src={selectedSlide.url}
+                />
+              </Link>
+            ) : (
+              <Image
+                alt={selectedSlide.alt}
+                className="embla__image h-full w-full object-contain p-5 sm:p-8"
+                fill
+                loading="eager"
+                ref={zoomImageRef}
+                sizes="(max-width: 1023px) 100vw, 48vw"
+                src={selectedSlide.url}
+              />
+            )}
           </div>
         </div>
       </div>
