@@ -3,19 +3,15 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   LogOut,
-  HousePlus,
-  Receipt,
-  ChartNoAxesCombined,
-  User,
-  Lock,
-  BadgeDollarSign,
   Heart,
   BookAudio,
   BanknoteArrowUp,
   Settings,
+  UserRound,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Carousel,
   CarouselContent,
@@ -23,10 +19,12 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
+import { useProfileAvatar } from "./ProfileAvatarProvider";
 // import { useAppDispatch } from "@/redux/hooks";
 // import { logout } from "@/redux/features/authSlice";
 
 export default function DashboardSidebar() {
+  const { avatarSrc } = useProfileAvatar();
   const pathname = usePathname();
   const path = pathname?.split("/")[2] ?? "";
   const router = useRouter();
@@ -80,6 +78,42 @@ export default function DashboardSidebar() {
       {/* ---------- Large devices: fixed vertical sidebar ---------- */}
       <div className="hidden xl:block sticky top-0 self-start max-h-screen overflow-y-auto border border-[#ECEEF0] pr-4 h-full rounded-xl">
         <div className="dashboard-card bg-white p-5 w-64">
+          <div className="mb-5 border-b border-[#ECEEF0] pb-4">
+            <Link
+              href="/user/profile"
+              className="flex min-w-0 items-center gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#99512f]"
+            >
+              <span className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#E6EAF0] bg-[#F4EDDF] text-sm font-semibold text-[#995618]">
+                {avatarSrc ? (
+                  <Image
+                    src={avatarSrc}
+                    alt=""
+                    fill
+                    unoptimized
+                    sizes="48px"
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  "RK"
+                )}
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-semibold text-[#172033]">
+                  Royal Kennels
+                </span>
+                <span className="mt-1 inline-flex rounded-full border border-[#cce8dc] bg-[#eaf5ef] px-2.5 py-1 text-[11px] font-medium text-[#388165]">
+                  Retail Customer
+                </span>
+              </span>
+            </Link>
+            <Link
+              href="/user/profile"
+              className="mt-1 inline-flex items-center gap-2 px-2 text-sm font-semibold text-[#a45a1a] hover:text-[#81430f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#99512f]"
+            >
+              {/* <Pencil aria-hidden="true" size={14} /> */}
+              Edit Profile
+            </Link>
+          </div>
           <div className="space-y-2">
             {SIDEBAR_LINKS.map((link) => (
               <Link
@@ -120,6 +154,20 @@ export default function DashboardSidebar() {
           className="relative px-10"
         >
           <CarouselContent className="-ml-2">
+            <CarouselItem className="basis-auto pl-2">
+              <Link
+                href="/user/profile"
+                aria-current={pathname === "/user/profile" ? "page" : undefined}
+                className={cn(
+                  "flex items-center gap-x-2 whitespace-nowrap rounded-full border border-[#ECEEF0] px-4 py-2 text-sm text-gray-scale-600 transition-all duration-300 ease-in-out",
+                  pathname === "/user/profile" &&
+                    "border-secondary-color bg-secondary-color text-white",
+                )}
+              >
+                <UserRound size={22} />
+                <span>Profile</span>
+              </Link>
+            </CarouselItem>
             {SIDEBAR_LINKS.map((link) => (
               <CarouselItem key={link.key} className="basis-auto pl-2">
                 <Link

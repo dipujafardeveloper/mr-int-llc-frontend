@@ -18,7 +18,7 @@ export default function RecentOrders() {
           Recent Orders
         </h2>
         <Link
-          href="/orders"
+          href="/user/orders"
           className="inline-flex items-center gap-1 text-base font-semibold text-[#995618] hover:text-[#5f350d] group cursor-pointer"
         >
           View All Orders <AnimatedArrow size={16} />

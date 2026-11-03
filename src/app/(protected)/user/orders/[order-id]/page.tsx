@@ -1,9 +1,30 @@
+import { Suspense } from "react";
 import OrderDetailsHeader from "../_components/OrderDetailsHeader";
 import OrderItemsCard from "../_components/OrderItemsCard";
 import OrderTimelineCard from "../_components/OrderTimelineCard";
 import ShippingAddressCard from "../_components/ShippingAddressCard";
 
 export default async function OrderDetailsPage({
+  params,
+}: {
+  params: Promise<{ "order-id": string }>;
+}) {
+  return (
+    <Suspense
+      fallback={
+        <div
+          aria-busy="true"
+          aria-label="Loading order details"
+          className="min-h-72 animate-pulse rounded-xl bg-[#f1f0ed]"
+        />
+      }
+    >
+      <OrderDetailsContent params={params} />
+    </Suspense>
+  );
+}
+
+async function OrderDetailsContent({
   params,
 }: {
   params: Promise<{ "order-id": string }>;

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Container from "@/components/container/Container";
 import logo from "@/assets/logo.png";
 import Image from "next/image";
@@ -20,7 +21,9 @@ export default function Navbar() {
               className="h-14 w-12 object-contain sm:h-16 sm:w-14 xl:h-20 xl:w-36"
             />
           </Link>
-          <NavLinks />
+          <Suspense fallback={<nav aria-hidden="true" className="hidden xl:flex" />}>
+            <NavLinks />
+          </Suspense>
         </div>
         <div className="hidden shrink-0 items-center gap-4 xl:flex">
           <Link href="/home#deal">
@@ -38,7 +41,9 @@ export default function Navbar() {
         </div>
         <div className="flex shrink-0 items-center gap-2 xl:hidden">
           <CartIcon compact />
-          <MobileNav />
+          <Suspense fallback={<span aria-hidden="true" className="size-10" />}>
+            <MobileNav />
+          </Suspense>
         </div>
       </Container>
     </div>

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Container from "@/components/container/Container";
 import BrandProductContainer from "./_components/BrandProductContainer";
 
@@ -11,6 +12,26 @@ const brandNames: Record<string, string> = {
 };
 
 export default async function BrandShopDetailsPages({
+  params,
+}: {
+  params: Promise<{ "brand-id": string }>;
+}) {
+  return (
+    <Suspense
+      fallback={
+        <div
+          aria-busy="true"
+          aria-label="Loading brand products"
+          className="min-h-72 animate-pulse bg-[#f1f0ed]"
+        />
+      }
+    >
+      <BrandShopDetailsContent params={params} />
+    </Suspense>
+  );
+}
+
+async function BrandShopDetailsContent({
   params,
 }: {
   params: Promise<{ "brand-id": string }>;

@@ -35,7 +35,7 @@ export default function DashboardWelcome() {
       </div>
 
       <Link
-        href="/user/edit-profile"
+        href="/user/profile"
         className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#a45a1a] px-5 text-xs font-medium text-white transition-colors hover:bg-[#874710] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a45a1a]"
       >
         <Pencil size={14} aria-hidden="true" />

@@ -44,7 +44,7 @@ type CountryStateCitySelectorProps = {
 };
 
 const fieldClassName =
-  "h-9 w-full rounded-lg border border-[#E1E5EA] bg-white px-3 text-xs text-[#273449] shadow-sm outline-none transition focus:border-[#a45a1a] focus:ring-2 focus:ring-[#a45a1a]/15 sm:h-10 py-5";
+  "h-11 w-full rounded-lg border border-[#E1E5EA] bg-white px-4 py-2 text-sm text-[#273449] shadow-sm outline-none transition focus:border-[#a45a1a] focus:ring-2 focus:ring-[#a45a1a]/15 sm:h-12 py-5";
 
 export default function CountryStateCitySelector({
   control,
@@ -86,15 +86,15 @@ export default function CountryStateCitySelector({
   };
 
   return (
-    <div className="space-y-3.5">
+    <div className="space-y-4.5">
       {loadError && (
         <p role="alert" className="text-xs text-red-600">
           Country and state options could not be loaded. Refresh and try again.
         </p>
       )}
 
-      <div className="space-y-3.5">
-        <div className="space-y-1.5">
+      <div className="space-y-4">
+        <div className="space-y-2">
           <label htmlFor="country" className="block text-xs font-medium text-[#273449]">
             Country <span className="text-red-500">*</span>
           </label>
@@ -131,7 +131,7 @@ export default function CountryStateCitySelector({
           {renderError("country")}
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <label htmlFor="state" className="block text-xs font-medium text-[#273449]">
             State / Province <span className="text-red-500">*</span>
           </label>
@@ -168,7 +168,7 @@ export default function CountryStateCitySelector({
           {renderError("state")}
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <label htmlFor="city" className="block text-xs font-medium text-[#273449]">
             City <span className="text-red-500">*</span>
           </label>
@@ -183,7 +183,7 @@ export default function CountryStateCitySelector({
           {renderError("city")}
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <label htmlFor="streetAddress" className="block text-xs font-medium text-[#273449]">
             Street Address <span className="text-red-500">*</span>
           </label>
@@ -198,7 +198,7 @@ export default function CountryStateCitySelector({
           {renderError("streetAddress")}
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <label htmlFor="zipCode" className="block text-xs font-medium text-[#273449]">
             ZIP / Postal Code <span className="text-red-500">*</span>
           </label>
