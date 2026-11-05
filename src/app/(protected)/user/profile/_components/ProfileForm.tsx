@@ -76,7 +76,7 @@ export default function ProfileForm() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#E1E5EA] bg-[#F4EDDF] text-lg font-semibold text-[#995618] sm:size-[72px]">
+          <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#E1E5EA] bg-[#F4EDDF] text-lg font-semibold text-[#995618] sm:size-18">
             {avatarSrc ? (
               <Image
                 src={avatarSrc}

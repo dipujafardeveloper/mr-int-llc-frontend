@@ -1,92 +1,45 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useActionState, useEffect, useState, type FormEvent } from "react";
 import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import logo from "@/assets/logo.png";
 import Image from "next/image";
 import Link from "next/link";
-// import { useCreateUserMutation } from "@/redux/api/authApi";
-// import { errorModification } from "@/lib/errors/errorModification";
 import { useRouter } from "next/navigation";
-// import { LoaderIcon } from "@/icons";
+import { registerUserAction } from "../../actions/auth.actions";
+import type { AuthActionState } from "../../actions/auth.types";
 
-// Zod validation schema
-const signupSchema = z
-  .object({
-    userType: z.enum(["Buyer", "Seller"], {
-      error: "Please select a user type",
-    }),
-    fullName: z.string().min(2, "Full name must be at least 2 characters"),
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z
-      .string()
-      .min(8, "Confirm password must be at least 8 characters"),
-    // rememberMe: z.boolean().default(false),
-    agreeToTerms: z.boolean().refine((val) => val === true, {
-      message: "You must agree to the Terms & Conditions",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
-type SignupFormData = z.infer<typeof signupSchema>;
+const initialState: AuthActionState = { status: "idle", message: "" };
 
 export default function SignupForm() {
-  const [error, setError] = useState<string | null>(null);
+  const [state, formAction, pending] = useActionState(
+    registerUserAction,
+    initialState,
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  // const [createUser, { isLoading }] = useCreateUserMutation();
+  const [passwordError, setPasswordError] = useState("");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<SignupFormData>({
-    // Cast schema to any to avoid zod version/type incompatibility with @hookform/resolvers
-    resolver: zodResolver(signupSchema as any),
-    defaultValues: {
-      userType: "Buyer",
-      fullName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      // rememberMe: false,
-      agreeToTerms: false,
-    },
-  });
-
-  const agreeToTerms = watch("agreeToTerms");
-
-  const onSubmit = async (data: SignupFormData) => {
-    const formattedData = {
-      userType: data.userType,
-      name: data.fullName,
-      email: data.email,
-      password: data.password,
-    };
-    try {
-      // const res = await createUser(formattedData).unwrap();
-      // sessionStorage.setItem("signUpToken", res?.data?.otpToken?.token);
-      // router.push("/verify-otp?sign_verification");
-      // setError(null);
-    } catch (err) {
-      // const error = errorModification(err);
-      // toast.error(error);
-      // setError(error);
+  useEffect(() => {
+    if (state.status === "success") {
+      router.push("/verify-otp");
     }
+  }, [router, state.status]);
+
+  const validatePasswords = (event: FormEvent<HTMLFormElement>) => {
+    const formData = new FormData(event.currentTarget);
+    if (formData.get("password") !== formData.get("confirmPassword")) {
+      event.preventDefault();
+      setPasswordError("Passwords do not match");
+      return;
+    }
+    setPasswordError("");
   };
 
   return (
     <div className="w-full xl:max-w-4xl md:max-w-xl mx-auto rounded-lg bg-white p-8 shadow-lg">
-      {/* Logo */}
       <div className="mb-2 text-center">
         <Link href="/">
           <div className="inline-flex flex-col items-center">
@@ -101,69 +54,64 @@ export default function SignupForm() {
         </Link>
       </div>
 
-      {/* Title and Subtitle */}
       <h1 className="mb-2 text-center lg:text-3xl md:text-2xl text-xl font-bold text-gray-900">
-        You're in the Right Place
+        You&apos;re in the Right Place
       </h1>
       <p className="mb-6 text-center">Create a free account for full access</p>
 
-      {/* Error Message */}
-      {error && (
-        <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
-          {error}
-        </div>
+      {state.status === "error" && (
+        <p role="alert" className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+          {state.message}
+        </p>
+      )}
+      {passwordError && (
+        <p role="alert" className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+          {passwordError}
+        </p>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* User Type Dropdown */}
+      <form action={formAction} onSubmit={validatePasswords} className="space-y-5">
         <div>
           <label
-            htmlFor="userType"
+            htmlFor="role"
             className="mb-2 block text-sm font-medium text-gray-900"
           >
             Select User
           </label>
           <div className="relative">
             <select
-              id="userType"
-              {...register("userType")}
+              id="role"
+              name="role"
+              required
+              defaultValue="retail"
               className="w-full appearance-none rounded-lg border border-[#3D3D3D] bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
             >
-              <option value="Buyer">Retail Customer</option>
-              <option value="Seller">Wholesale Customer</option>
+              <option value="retail">Retail Customer</option>
+              <option value="wholesale">Wholesale Customer</option>
             </select>
             <ChevronDown className="pointer-events-none absolute right-3 top-3.5 h-5 w-5 text-gray-400" />
           </div>
-          {errors.userType && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.userType.message}
-            </p>
-          )}
         </div>
 
-        {/* Full Name Input */}
         <div>
           <label
-            htmlFor="fullName"
+            htmlFor="name"
             className="mb-2 block text-sm font-medium text-gray-900"
           >
             Full Name
           </label>
           <input
-            id="fullName"
+            id="name"
+            name="name"
             type="text"
+            minLength={2}
+            autoComplete="name"
             placeholder="Enter Full Name"
-            {...register("fullName")}
+            required
             className="w-full rounded-lg border border-[#3D3D3D] px-4 py-2.5 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
           />
-          {errors.fullName && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.fullName.message}
-            </p>
-          )}
         </div>
 
-        {/* Email Input */}
         <div>
           <label
             htmlFor="email"
@@ -173,17 +121,15 @@ export default function SignupForm() {
           </label>
           <input
             id="email"
+            name="email"
             type="email"
+            autoComplete="email"
             placeholder="example@gmail.com"
-            {...register("email")}
+            required
             className="w-full rounded-lg border border-[#3D3D3D] px-4 py-2.5 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
           />
-          {errors.email && (
-            <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
-          )}
         </div>
 
-        {/* Password Input with Show/Hide */}
         <div>
           <label
             htmlFor="password"
@@ -194,14 +140,19 @@ export default function SignupForm() {
           <div className="relative">
             <input
               id="password"
+              name="password"
               type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              minLength={8}
               placeholder="••••••••"
-              {...register("password")}
-              className="w-full rounded-lg border border-[#3D3D3D] px-4 py-2.5 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
+              required
+              onChange={() => setPasswordError("")}
+              className="w-full rounded-lg border border-[#3D3D3D] px-4 py-2.5 pr-12 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowPassword((shown) => !shown)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
               className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 transition"
             >
               {showPassword ? (
@@ -211,14 +162,8 @@ export default function SignupForm() {
               )}
             </button>
           </div>
-          {errors.password && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.password.message}
-            </p>
-          )}
         </div>
 
-        {/* Confirm Password Input with Show/Hide */}
         <div>
           <label
             htmlFor="confirmPassword"
@@ -229,14 +174,21 @@ export default function SignupForm() {
           <div className="relative">
             <input
               id="confirmPassword"
+              name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
+              autoComplete="new-password"
+              minLength={8}
               placeholder="••••••••"
-              {...register("confirmPassword")}
-              className="w-full rounded-lg border border-[#3D3D3D] px-4 py-2.5 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
+              required
+              onChange={() => setPasswordError("")}
+              className="w-full rounded-lg border border-[#3D3D3D] px-4 py-2.5 pr-12 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
             />
             <button
               type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              onClick={() => setShowConfirmPassword((shown) => !shown)}
+              aria-label={
+                showConfirmPassword ? "Hide confirm password" : "Show confirm password"
+              }
               className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 transition"
             >
               {showConfirmPassword ? (
@@ -246,56 +198,41 @@ export default function SignupForm() {
               )}
             </button>
           </div>
-          {errors.confirmPassword && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.confirmPassword.message}
-            </p>
-          )}
         </div>
 
         <label
           htmlFor="agreeToTerms"
-          className="flex mt-2  gap-2 text-sm text-gray-700"
+          className="flex mt-2 gap-2 text-sm text-gray-700"
         >
           <input
             id="agreeToTerms"
+            name="agreeToTerms"
             type="checkbox"
-            {...register("agreeToTerms")}
+            required
+            checked={agreeToTerms}
+            onChange={(event) => setAgreeToTerms(event.target.checked)}
             className="h-4 w-4 cursor-pointer rounded border-gray-300 text-blue-600 transition focus:ring-blue-500 accent-secondary-color"
           />
           <span className="text-[#1E1E1E]">
             I have read and agree to the BetterOffMarket{" "}
             <Link
               href="/terms-conditions"
-              className="text-secondary-color hover:text-blue-900 font-semibold underline "
+              className="text-secondary-color hover:text-blue-900 font-semibold underline"
             >
-              Terms & Conditions
+              Terms &amp; Conditions
             </Link>
           </span>
         </label>
-        {errors.agreeToTerms && (
-          <p className="text-xs text-red-600">{errors.agreeToTerms.message}</p>
-        )}
 
-        {/* Sign Up Button */}
         <button
           type="submit"
-          disabled={!agreeToTerms}
-          className="w-full rounded-lg bg-secondary-color px-4 py-2.5 font-semibold text-white transition hover:bg-secondary-color/80 disabled:opacity-50 disabled:cursor-not-allowed  cursor-pointer"
+          disabled={!agreeToTerms || pending}
+          className="w-full rounded-lg bg-secondary-color px-4 py-2.5 font-semibold text-white transition hover:bg-secondary-color/80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          {/* {isLoading ? (
-            <span className="flex items-center justify-center">
-              <LoaderIcon className="-ml-1 mr-3" />
-              <span className="sr-only">Signing up...</span>
-            </span>
-          ) : (
-            "Sign up"
-          )} */}
-          Sign up
+          {pending ? "Creating account..." : "Sign up"}
         </button>
       </form>
 
-      {/* already have an account */}
       <p className="mt-4 text-center text-sm text-gray-700">
         Already have an account?{" "}
         <Link
@@ -306,7 +243,6 @@ export default function SignupForm() {
         </Link>
       </p>
 
-      {/* Continue without Sign In */}
       <p className="mt-3 text-center text-sm text-gray-700">
         <Link
           href="/"

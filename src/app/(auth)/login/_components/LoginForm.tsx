@@ -1,77 +1,53 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useActionState, useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import logo from "@/assets/logo.png";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-// import { jwtDecode } from "jwt-decode";
-import { toast } from "sonner";
+import { loginAction } from "../../actions/auth.actions";
+import type { AuthActionState } from "../../actions/auth.types";
+import { useAppDispatch } from "@/redux/hooks";
+import { setUser } from "@/redux/features/authSlice";
 
-
-// Zod validation schema
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-  rememberMe: z.boolean().default(false),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+const initialState: AuthActionState = { status: "idle", message: "" };
 
 export default function LoginForm() {
-  const [error, setError] = useState<string | null>(null);
+  const [state, formAction, pending] = useActionState(loginAction, initialState);
   const [showPassword, setShowPassword] = useState(false);
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  // const [login, { isLoading }] = useLoginMutation();
-  // const { requestFcmToken } = useFcmToken();
-
   const callbackUrl = useSearchParams().get("callbackUrl");
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema as any),
-    defaultValues: {
-      email: "",
-      password: "",
-      rememberMe: false,
-    },
-  });
+  useEffect(() => {
+    if (state.status !== "success" || !state.accessToken) return;
 
-  const onSubmit = async (data: LoginFormData & { fcmToken?: string }) => {
-    try {
-      // const fcmToken = await requestFcmToken();
-      // if (fcmToken) data.fcmToken = fcmToken;
+    dispatch(
+      setUser({
+        user: state.user ?? null,
+        token: state.accessToken,
+        refreshToken: state.refreshToken,
+      }),
+    );
 
-      // const res = await login(data).unwrap();
-
-      // dispatch(
-      //   setUser({
-      //     user: jwtDecode(res?.data?.accessToken),
-      //     token: res?.data?.accessToken,
-      //   }),
-      // );
-      toast.success("Login successful!");
-      if (callbackUrl) router.replace(callbackUrl);
-      else router.push("/user/dashboard");
-      setError(null);
-    } catch (err: any) {
-      // const error = errorModification(err);
-      toast.error(error);
-      setError(error);
-    }
-  };
+    const destination =
+      callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//")
+        ? callbackUrl
+        : "/user/dashboard";
+    router.replace(destination);
+  }, [
+    callbackUrl,
+    dispatch,
+    router,
+    state.accessToken,
+    state.refreshToken,
+    state.status,
+    state.user,
+  ]);
 
   return (
     <div className="w-full xl:max-w-4xl md:max-w-xl mx-auto rounded-lg bg-white p-8 shadow-lg">
-      {/* Logo */}
       <div className="mb-1 text-center">
         <div className="inline-flex flex-col items-center">
           <Link href="/">
@@ -86,21 +62,25 @@ export default function LoginForm() {
         </div>
       </div>
 
-      {/* Title and Subtitle */}
       <h1 className="mb-2 text-center lg:text-3xl md:text-2xl text-xl font-bold text-gray-900">
         Welcome Back
       </h1>
       <p className="mb-6 text-center">Sign in to your account</p>
 
-      {/* Error Message */}
-      {error && (
-        <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
-          {error}
-        </div>
+      {state.message && (
+        <p
+          role={state.status === "error" ? "alert" : "status"}
+          className={`mb-4 rounded-md p-3 text-sm ${
+            state.status === "error"
+              ? "bg-red-50 text-red-700"
+              : "bg-green-50 text-green-700"
+          }`}
+        >
+          {state.message}
+        </p>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Email Input */}
+      <form action={formAction} className="space-y-5">
         <div>
           <label
             htmlFor="email"
@@ -110,17 +90,15 @@ export default function LoginForm() {
           </label>
           <input
             id="email"
+            name="email"
             type="email"
+            autoComplete="email"
             placeholder="example@gmail.com"
-            {...register("email")}
+            required
             className="w-full rounded-lg border border-[#3D3D3D] px-4 py-2.5 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
           />
-          {errors.email && (
-            <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
-          )}
         </div>
 
-        {/* Password Input */}
         <div>
           <label
             htmlFor="password"
@@ -131,16 +109,18 @@ export default function LoginForm() {
           <div className="relative">
             <input
               id="password"
+              name="password"
               type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
               placeholder="••••••••"
-              {...register("password")}
+              required
               className="w-full rounded-lg border border-[#3D3D3D] px-4 py-2.5 pr-10 text-gray-900 placeholder-gray-400 transition focus:border-[#3D3D3D] focus:outline-none focus:ring-1 focus:ring-gray-400"
             />
             <button
               type="button"
-              onClick={() => setShowPassword((prev) => !prev)}
+              onClick={() => setShowPassword((shown) => !shown)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
               className="absolute right-3 top-1/2 z-30 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              tabIndex={-1}
             >
               {showPassword ? (
                 <EyeOff className="h-5 w-5" />
@@ -149,14 +129,8 @@ export default function LoginForm() {
               )}
             </button>
           </div>
-          {errors.password && (
-            <p className="mt-1 text-xs text-red-600">
-              {errors.password.message}
-            </p>
-          )}
         </div>
 
-        {/* Remember Me & Forgot Password */}
         <div className="flex items-center justify-between">
           <label
             htmlFor="rememberMe"
@@ -165,7 +139,6 @@ export default function LoginForm() {
             <input
               id="rememberMe"
               type="checkbox"
-              {...register("rememberMe")}
               className="h-4 w-4 cursor-pointer rounded border-gray-300 text-blue-600 transition focus:ring-blue-500 accent-primary-color"
             />
             Remember me
@@ -178,7 +151,6 @@ export default function LoginForm() {
           </Link>
         </div>
 
-        {/* Sign Up Link */}
         <p className="mb-4 text-center text-sm text-[#1E1E1E]">
           Don&apos;t have Account?{" "}
           <Link
@@ -189,33 +161,21 @@ export default function LoginForm() {
           </Link>
         </p>
 
-        {/* Continue without Sign In */}
         <div>
-          <Link href="/">
-            <button
-              type="button"
-              className="w-full text-center  font-medium text-secondary-color hover:text-secondary-color/80 cursor-pointer"
-            >
-              Continue without Sign In
-            </button>
+          <Link
+            href="/"
+            className="block w-full text-center font-medium text-secondary-color hover:text-secondary-color/80 cursor-pointer"
+          >
+            Continue without Sign In
           </Link>
         </div>
 
-        {/* Sign In Button */}
         <button
           type="submit"
-          // disabled={isLoading}
+          disabled={pending}
           className="w-full rounded-lg bg-secondary-color cursor-pointer px-4 py-2.5 font-semibold text-white transition hover:bg-secondary-color/90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {/* {isLoading ? (
-            <span className="flex items-center justify-center">
-              <LoaderIcon className="-ml-1 mr-3" />
-              <span>Signing in...</span>
-            </span>
-          ) : (
-            "Sign In"
-          )} */}
-          Sign In
+          {pending ? "Signing in..." : "Sign In"}
         </button>
       </form>
     </div>

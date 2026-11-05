@@ -26,7 +26,7 @@ export default function OrderTimelineCard() {
               {index < timeline.length - 1 && (
                 <span
                   aria-hidden="true"
-                  className={`absolute left-[11px] top-6 h-[calc(100%-12px)] w-0.5 ${
+                  className={`absolute left-2.75 top-6 h-[calc(100%-12px)] w-0.5 ${
                     isComplete ? "bg-[#10b981]" : "bg-[#e2e8f0]"
                   }`}
                 />

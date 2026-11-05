@@ -1,119 +1,96 @@
 "use client";
-// import { LoaderIcon } from "@/icons";
-// import { errorModification } from "@/lib/errors/errorModification";
-// import { useVerifyOtpMutation } from "@/redux/api/authApi";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
 
-export default function VerifyOTpForm() {
+import {
+  useActionState,
+  useEffect,
+  useState,
+  type ClipboardEvent,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
+import { useRouter } from "next/navigation";
+import {
+  resendSignupOtpAction,
+  verifySignupOtpAction,
+} from "../../actions/auth.actions";
+import type { AuthActionState } from "../../actions/auth.types";
+
+const initialState: AuthActionState = { status: "idle", message: "" };
+
+export default function VerifyOTpForm({ email }: { email: string }) {
+  const [state, formAction, pending] = useActionState(
+    verifySignupOtpAction,
+    initialState,
+  );
+  const [resendState, resendFormAction, resendPending] = useActionState(
+    resendSignupOtpAction,
+    initialState,
+  );
   const [codeInputs, setCodeInputs] = useState(["", "", "", "", "", ""]);
-  const [error, setError] = useState("");
+  const [inputError, setInputError] = useState("");
   const router = useRouter();
-  // const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
+
+  useEffect(() => {
+    if (state.status === "success") {
+      router.replace("/login");
+    }
+  }, [router, state.status]);
 
   const handleInputChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
 
-    const newInputs = [...codeInputs];
-    newInputs[index] = value;
-
-    setCodeInputs(newInputs);
-    setError("");
+    const nextInputs = [...codeInputs];
+    nextInputs[index] = value.slice(-1);
+    setCodeInputs(nextInputs);
+    setInputError("");
 
     if (value && index < 5) {
-      const nextInput = document.getElementById(
-        `code-${index + 1}`,
-      ) as HTMLInputElement;
-      nextInput?.focus();
+      document.getElementById(`code-${index + 1}`)?.focus();
     }
   };
 
   const handleKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>,
+    event: KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (e.key === "Backspace" && !codeInputs[index] && index > 0) {
-      const prevInput = document.getElementById(
-        `code-${index - 1}`,
-      ) as HTMLInputElement;
-      prevInput?.focus();
+    if (event.key === "Backspace" && !codeInputs[index] && index > 0) {
+      document.getElementById(`code-${index - 1}`)?.focus();
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const fullCode = codeInputs.join("");
-
-    if (fullCode.length !== 6) {
-      setError("Please enter all 6 digits");
-      return;
-    }
-
-    // const signUpToken = sessionStorage.getItem("signUpToken");
-
-    router.push("/reset-password");
-    try {
-      // const res = await verifyOtp({
-      //   otp: fullCode,
-      // }).unwrap();
-      // if (signUpToken) {
-      //   sessionStorage.removeItem("signUpToken");
-      //   router.replace("/login");
-      //   setCodeInputs(["", "", "", "", "", ""]);
-      //   setError("");
-      //   return;
-      // }
-
-      // if (res?.data?.token) {
-      //   sessionStorage.removeItem("forgotPasswordToken");
-      //   sessionStorage.setItem("resetPasswordToken", res?.data?.token);
-      //   router.replace("/reset-password");
-      //   setCodeInputs(["", "", "", "", "", ""]);
-      //   setError("");
-      // }
-    } catch (error) {
-      // const err = errorModification(error);
-      // toast.error(err);
-      // setError(err);
+  const validateCode = (event: FormEvent<HTMLFormElement>) => {
+    if (codeInputs.join("").length !== 6) {
+      event.preventDefault();
+      setInputError("Please enter all 6 digits.");
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const pasted = e.clipboardData
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const pasted = event.clipboardData
       .getData("text")
       .replace(/\D/g, "")
       .slice(0, 6);
-
     if (!pasted) return;
 
-    const newInputs = [...codeInputs];
-    for (let i = 0; i < 6; i++) {
-      newInputs[i] = pasted[i] || "";
-    }
-    setCodeInputs(newInputs);
-    setError("");
-
-    // focus the next empty box, or the last box if all filled
-    const nextIndex = pasted.length < 6 ? pasted.length : 5;
-    const nextInput = document.getElementById(
-      `code-${nextIndex}`,
-    ) as HTMLInputElement;
-    nextInput?.focus();
+    setCodeInputs(Array.from({ length: 6 }, (_, index) => pasted[index] ?? ""));
+    setInputError("");
+    const nextIndex = Math.min(pasted.length, 5);
+    document.getElementById(`code-${nextIndex}`)?.focus();
   };
 
   return (
     <div className="w-full xl:max-w-4xl md:max-w-xl mx-auto rounded-2xl bg-white p-8 shadow-xl">
-      <form onSubmit={handleSubmit} className="text-center">
+      <form action={formAction} onSubmit={validateCode} className="text-center">
         <h1 className="mb-3 lg:text-3xl md:text-2xl text-xl font-bold text-primary-black">
-          Recover Password
+          Verify your email
         </h1>
         <p className="mb-4 text-primary-black max-w-xl mx-auto">
-          Please provide the email address associated with your account, and
-          we&apos;ll send you verification code to reset your password.
+          Enter the 6-digit verification code sent to{" "}
+          {email || "the email address used to sign up"}.
         </p>
 
+        <input type="hidden" name="otp" value={codeInputs.join("")} />
         <div className="mb-8">
           <div className="flex justify-center gap-2">
             {codeInputs.map((value, index) => (
@@ -121,33 +98,55 @@ export default function VerifyOTpForm() {
                 key={index}
                 id={`code-${index}`}
                 type="text"
+                inputMode="numeric"
+                autoComplete={index === 0 ? "one-time-code" : "off"}
                 maxLength={1}
                 value={value}
-                onChange={(e) => handleInputChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
+                aria-label={`Verification digit ${index + 1}`}
+                onChange={(event) =>
+                  handleInputChange(index, event.target.value)
+                }
+                onKeyDown={(event) => handleKeyDown(index, event)}
                 onPaste={handlePaste}
                 className="size-14 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] text-center text-xl font-semibold transition-colors focus:border-primary-black focus:outline-none hover:border-gray-400"
               />
             ))}
           </div>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          {(inputError || state.status === "error") && (
+            <p role="alert" className="mt-2 text-sm text-red-600">
+              {inputError || state.message}
+            </p>
+          )}
         </div>
 
         <button
           type="submit"
-          // disabled={isLoading}
+          disabled={pending || !email}
           className="w-full rounded-lg bg-secondary-color py-2.5 font-semibold text-white transition-colors hover:bg-secondary-color/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          {/* {isLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <LoaderIcon className="-ml-1 mr-3" />
-              Verifying...
-            </span>
-          ) : (
-            "Verify Code"
-          )} */}
-          Verify Code
+          {pending ? "Verifying..." : "Verify Code"}
         </button>
+      </form>
+      <form action={resendFormAction} className="mt-4 text-center">
+        <button
+          type="submit"
+          disabled={resendPending || !email}
+          className="font-medium text-secondary-color hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {resendPending ? "Sending..." : "Resend code"}
+        </button>
+        {resendState.message && (
+          <p
+            role={resendState.status === "error" ? "alert" : "status"}
+            className={`mt-2 text-sm ${
+              resendState.status === "error"
+                ? "text-red-600"
+                : "text-green-700"
+            }`}
+          >
+            {resendState.message}
+          </p>
+        )}
       </form>
     </div>
   );
